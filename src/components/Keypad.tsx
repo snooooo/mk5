@@ -18,7 +18,7 @@ export function Keypad({ onInput, onDelete, onConfirm, confirmDisabled }: Keypad
                 <button
                     key={key}
                     onClick={() => onInput(key)}
-                    className="h-16 text-2xl font-medium bg-white rounded-xl shadow-sm active:bg-gray-100 transition-colors"
+                    className="h-16 text-2xl font-bold text-gray-900 bg-white rounded-xl shadow-sm active:bg-gray-100 transition-colors"
                 >
                     {key}
                 </button>
@@ -27,7 +27,7 @@ export function Keypad({ onInput, onDelete, onConfirm, confirmDisabled }: Keypad
                 onClick={onDelete}
                 className="h-16 flex items-center justify-center bg-gray-200 rounded-xl active:bg-gray-300 transition-colors"
             >
-                <Delete className="w-6 h-6" />
+                <Delete className="w-6 h-6 text-gray-700" />
             </button>
 
             <button
