@@ -46,7 +46,7 @@ export default function SettingsPage() {
                 <button onClick={() => router.back()} className="p-2 -ml-2 text-gray-600">
                     <ArrowLeft className="w-6 h-6" />
                 </button>
-                <h1 className="font-bold text-lg ml-2">設定</h1>
+                <h1 className="font-bold text-lg ml-2 text-gray-900">設定</h1>
             </header>
 
             <main className="p-4 space-y-6">
@@ -62,7 +62,7 @@ export default function SettingsPage() {
                                 type="number"
                                 value={initialBalance}
                                 onChange={(e) => setInitialBalance(e.target.value)}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 font-semibold"
                             />
                             <p className="text-xs text-gray-500 mt-1">
                                 ※変更すると現在の残高もこの値にリセットされます
@@ -77,7 +77,7 @@ export default function SettingsPage() {
                                 type="number"
                                 value={hourlyWage}
                                 onChange={(e) => setHourlyWage(e.target.value)}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 font-semibold"
                             />
                             <p className="text-xs text-gray-500 mt-1">
                                 ※「0」に設定すると時間換算表示がオフになります

@@ -88,42 +88,23 @@ export function TransactionList({ transactions }: TransactionListProps) {
                 <div
                     onClick={() => setEditingTx(null)}
                     className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-in fade-in duration-200"
-                >
-                    <div
-                        onClick={(e) => e.stopPropagation()}
-                        className="bg-white w-full max-w-sm rounded-2xl p-6 shadow-xl"
-                    >
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-bold">使途を編集</h3>
-                            <button onClick={() => setEditingTx(null)} className="text-gray-400 hover:text-gray-600">
-                                <X className="w-6 h-6" />
-                            </button>
-                        </div>
+                    placeholder="使途を入力してください"
+                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                    autoFocus
+                />
+                        </div >
 
-                        <div className="mb-6">
-                            <div className="text-2xl font-bold text-center mb-4">
-                                {editingTx.type === 'income' ? '+' : ''}{editingTx.amount.toLocaleString()}
-                            </div>
-                            <input
-                                type="text"
-                                value={memoInput}
-                                onChange={(e) => setMemoInput(e.target.value)}
-                                placeholder="使途を入力してください"
-                                className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                                autoFocus
-                            />
-                        </div>
-
-                        <button
-                            onClick={handleSave}
-                            className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl shadow-md active:bg-blue-700 transition-colors flex items-center justify-center"
-                        >
-                            <Save className="w-5 h-5 mr-2" />
-                            保存
-                        </button>
-                    </div>
-                </div>
-            )}
+        <button
+            onClick={handleSave}
+            className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl shadow-md active:bg-blue-700 transition-colors flex items-center justify-center"
+        >
+            <Save className="w-5 h-5 mr-2" />
+            保存
+        </button>
+                    </div >
+                </div >
+            )
+}
         </>
     );
 }

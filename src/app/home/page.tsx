@@ -31,22 +31,8 @@ export default function HomePage() {
         .reduce((sum, tx) => sum + Math.abs(tx.amount), 0);
 
     const todayIncome = todaysTransactions
-        .filter((tx) => tx.type === 'income')
-        .reduce((sum, tx) => sum + tx.amount, 0);
 
-    return (
-        <Layout>
-            <header className="p-4 flex items-center justify-between bg-white border-b border-gray-100 sticky top-0 z-10">
-                <h1 className="text-xl font-bold tracking-tight">MK5</h1>
-                <Link href="/settings" className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                    <Settings className="w-6 h-6 text-gray-600" />
-                </Link>
-            </header>
-
-            <main className="flex-1 overflow-y-auto p-4 pb-24">
-                <BalanceDisplay settings={settings} />
-
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">
+        < div className = "bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6" >
                     <h2 className="text-sm font-semibold text-gray-500 mb-3">今日のサマリー</h2>
                     <div className="flex justify-between">
                         <div>
@@ -58,28 +44,28 @@ export default function HomePage() {
                             <div className="text-lg font-bold text-green-600">+{todayIncome.toLocaleString()}</div>
                         </div>
                     </div>
-                </div>
+                </div >
 
-                <h2 className="text-lg font-bold mb-3">最近の取引</h2>
+                <h2 className="text-lg font-bold mb-3 text-gray-900">最近の取引</h2>
                 <TransactionList transactions={transactions} />
-            </main>
+            </main >
 
-            <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex gap-3 justify-center max-w-md mx-auto w-full">
-                <Link
-                    href="/?type=expense"
-                    className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded-xl py-4 flex items-center justify-center font-bold shadow-lg active:scale-95 transition-all"
-                >
-                    <Minus className="w-6 h-6 mr-2" />
-                    支出を記録
-                </Link>
-                <Link
-                    href="/?type=income"
-                    className="w-1/3 bg-green-500 hover:bg-green-600 text-white rounded-xl py-4 flex items-center justify-center font-bold shadow-lg active:scale-95 transition-all"
-                >
-                    <Plus className="w-6 h-6 mr-1" />
-                    入金
-                </Link>
-            </div>
-        </Layout>
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex gap-3 justify-center max-w-md mx-auto w-full">
+            <Link
+                href="/?type=expense"
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded-xl py-4 flex items-center justify-center font-bold shadow-lg active:scale-95 transition-all"
+            >
+                <Minus className="w-6 h-6 mr-2" />
+                支出を記録
+            </Link>
+            <Link
+                href="/?type=income"
+                className="w-1/3 bg-green-500 hover:bg-green-600 text-white rounded-xl py-4 flex items-center justify-center font-bold shadow-lg active:scale-95 transition-all"
+            >
+                <Plus className="w-6 h-6 mr-1" />
+                入金
+            </Link>
+        </div>
+        </Layout >
     );
 }
