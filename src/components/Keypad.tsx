@@ -7,10 +7,28 @@ interface KeypadProps {
     onDelete: () => void;
     onConfirm: () => void;
     confirmDisabled?: boolean;
+    confirmColor?: 'blue' | 'red' | 'green';
+    confirmText?: string;
 }
 
-export function Keypad({ onInput, onDelete, onConfirm, confirmDisabled }: KeypadProps) {
+export function Keypad({
+    onInput,
+    onDelete,
+    onConfirm,
+    confirmDisabled,
+    confirmColor = 'blue',
+    confirmText = '決定'
+}: KeypadProps) {
     const keys = ['7', '8', '9', '4', '5', '6', '1', '2', '3', '00', '0'];
+
+    const getConfirmColorClass = () => {
+        if (confirmDisabled) return "bg-gray-400 cursor-not-allowed";
+        switch (confirmColor) {
+            case 'red': return "bg-red-500 active:bg-red-600 shadow-md";
+            case 'green': return "bg-green-500 active:bg-green-600 shadow-md";
+            default: return "bg-blue-600 active:bg-blue-700 shadow-md";
+        }
+    };
 
     return (
         <div className="grid grid-cols-3 gap-3 p-4 bg-gray-50 rounded-t-2xl">
@@ -35,13 +53,11 @@ export function Keypad({ onInput, onDelete, onConfirm, confirmDisabled }: Keypad
                 disabled={confirmDisabled}
                 className={clsx(
                     "col-span-3 h-16 flex items-center justify-center rounded-xl text-white font-bold text-xl transition-colors",
-                    confirmDisabled
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-blue-600 active:bg-blue-700 shadow-md"
+                    getConfirmColorClass()
                 )}
             >
                 <Check className="w-6 h-6 mr-2" />
-                決定
+                {confirmText}
             </button>
         </div>
     );

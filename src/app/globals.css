@@ -1,5 +1,31 @@
 @import "tailwindcss";
 
+/* Mobile optimizations */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* Safe area support for notched devices */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Prevent pull-to-refresh on iOS */
+body {
+  overscroll-behavior-y: none;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

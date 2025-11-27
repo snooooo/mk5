@@ -13,15 +13,27 @@ export function TransactionList({ transactions }: TransactionListProps) {
     const { editTransaction, settings } = useWallet();
     const [editingTx, setEditingTx] = useState<Transaction | null>(null);
     const [memoInput, setMemoInput] = useState('');
+    const [dateTimeInput, setDateTimeInput] = useState('');
 
     const handleEditClick = (tx: Transaction) => {
         setEditingTx(tx);
         setMemoInput(tx.memo);
+        // Format datetime for input (YYYY-MM-DDTHH:MM)
+        const date = new Date(tx.createdAt);
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        const h = String(date.getHours()).padStart(2, '0');
+        const min = String(date.getMinutes()).padStart(2, '0');
+        setDateTimeInput(`${y}-${m}-${d}T${h}:${min}`);
     };
 
     const handleSave = () => {
         if (editingTx) {
-            editTransaction(editingTx.id, { memo: memoInput });
+            editTransaction(editingTx.id, {
+                memo: memoInput,
+                createdAt: new Date(dateTimeInput).toISOString()
+            });
             setEditingTx(null);
         }
     };
@@ -39,6 +51,25 @@ export function TransactionList({ transactions }: TransactionListProps) {
         return `${hours.toFixed(1)}時間`;
     };
 
+    // Group transactions by date
+    const groupedTransactions = transactions.reduce((groups, tx) => {
+        const date = new Date(tx.createdAt).toLocaleDateString('ja-JP');
+        if (!groups[date]) {
+            groups[date] = [];
+        }
+        groups[date].push(tx);
+        return groups;
+    }, {} as Record<string, Transaction[]>);
+
+    const getRelativeDateLabel = (dateStr: string) => {
+        const today = new Date().toLocaleDateString('ja-JP');
+        const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('ja-JP');
+
+        if (dateStr === today) return '今日';
+        if (dateStr === yesterday) return '昨日';
+        return dateStr;
+    };
+
     if (transactions.length === 0) {
         return (
             <div className="text-center py-8 text-gray-400">
@@ -49,38 +80,46 @@ export function TransactionList({ transactions }: TransactionListProps) {
 
     return (
         <>
-            <div className="space-y-3">
-                {transactions.map((tx) => {
-                    const timeEq = getTimeEquivalent(tx.amount);
-
-                    return (
-                        <div
-                            key={tx.id}
-                            onClick={() => handleEditClick(tx)}
-                            className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border border-gray-100 active:bg-gray-50 transition-colors cursor-pointer"
-                        >
-                            <div className="flex flex-col">
-                                <span className="text-sm text-gray-500">
-                                    {new Date(tx.createdAt).toLocaleDateString()} {new Date(tx.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </span>
-                                <span className={`font-medium truncate max-w-[200px] ${!tx.memo ? 'text-gray-400 italic' : 'text-gray-700'}`}>
-                                    {tx.memo || '使途を入力...'}
-                                </span>
-                            </div>
-                            <div className="text-right">
-                                <div className={`text-lg font-bold ${tx.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                                    {tx.type === 'income' ? '+' : ''}{tx.amount.toLocaleString()}
-                                </div>
-                                {timeEq && tx.type === 'expense' && (
-                                    <div className="text-xs text-gray-400 flex items-center justify-end mt-1">
-                                        <Clock className="w-3 h-3 mr-1" />
-                                        {timeEq}
+            <div className="space-y-6">
+                {Object.entries(groupedTransactions).map(([date, txs]) => (
+                    <div key={date}>
+                        <h3 className="text-sm font-bold text-gray-500 mb-2 ml-1">
+                            {getRelativeDateLabel(date)}
+                        </h3>
+                        <div className="space-y-3">
+                            {txs.map((tx) => {
+                                const timeEq = getTimeEquivalent(tx.amount);
+                                return (
+                                    <div
+                                        key={tx.id}
+                                        onClick={() => handleEditClick(tx)}
+                                        className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border border-gray-100 active:bg-gray-50 transition-colors cursor-pointer"
+                                    >
+                                        <div className="flex flex-col">
+                                            <span className="text-xs text-gray-400 mb-0.5">
+                                                {new Date(tx.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </span>
+                                            <span className={`font-medium truncate max-w-[200px] ${!tx.memo ? 'text-gray-400 italic' : 'text-gray-700'}`}>
+                                                {tx.memo || '使途を入力...'}
+                                            </span>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className={`text-lg font-bold ${tx.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                                                {tx.type === 'income' ? '+' : ''}{tx.amount.toLocaleString()}
+                                            </div>
+                                            {timeEq && tx.type === 'expense' && (
+                                                <div className="text-xs text-gray-400 flex items-center justify-end mt-1">
+                                                    <Clock className="w-3 h-3 mr-1" />
+                                                    {timeEq}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-                                )}
-                            </div>
+                                );
+                            })}
                         </div>
-                    );
-                })}
+                    </div>
+                ))}
             </div>
 
             {/* Edit Modal */}
@@ -104,14 +143,28 @@ export function TransactionList({ transactions }: TransactionListProps) {
                             <div className="text-2xl font-bold text-center mb-4 text-gray-900">
                                 {editingTx.type === 'income' ? '+' : ''}{editingTx.amount.toLocaleString()}
                             </div>
-                            <input
-                                type="text"
-                                value={memoInput}
-                                onChange={(e) => setMemoInput(e.target.value)}
-                                placeholder="使途を入力してください"
-                                className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                                autoFocus
-                            />
+                            <div className="space-y-3">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">日時</label>
+                                    <input
+                                        type="datetime-local"
+                                        value={dateTimeInput}
+                                        onChange={(e) => setDateTimeInput(e.target.value)}
+                                        className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">使途</label>
+                                    <input
+                                        type="text"
+                                        value={memoInput}
+                                        onChange={(e) => setMemoInput(e.target.value)}
+                                        placeholder="使途を入力してください"
+                                        className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                                        autoFocus
+                                    />
+                                </div>
+                            </div>
                         </div>
 
                         <button
