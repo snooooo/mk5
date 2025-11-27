@@ -11,7 +11,7 @@ import { Layout } from '@/components/Layout';
 export default function InputPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { settings } = useWallet();
+  const { settings, addTransaction } = useWallet();
   const [amount, setAmount] = useState('0');
   const [showIncomeModal, setShowIncomeModal] = useState(false);
   const [customCategory, setCustomCategory] = useState('');
@@ -47,7 +47,12 @@ export default function InputPage() {
   };
 
   const handleIncomeCategorySelect = (category: string) => {
-    router.push(`/add?type=income&amount=${amount}&memo=${encodeURIComponent(category)}`);
+    addTransaction({
+      amount: parseInt(amount),
+      type: 'income',
+      memo: category,
+    });
+    router.push('/home');
   };
 
   const handleCustomCategorySubmit = (e: React.FormEvent) => {
@@ -77,7 +82,7 @@ export default function InputPage() {
         <div className="flex-1 flex flex-col items-center justify-center p-8 bg-white">
           <div className="text-gray-500 mb-2 font-medium">金額を入力</div>
           <div className="text-5xl font-bold tracking-tight text-gray-900 flex items-baseline">
-            <span className="text-2xl mr-1">{settings.currency}</span>
+            <span className="text-5xl mr-1">¥</span>
             {formattedAmount}
           </div>
         </div>

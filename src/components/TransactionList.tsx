@@ -105,7 +105,7 @@ export function TransactionList({ transactions }: TransactionListProps) {
                                         </div>
                                         <div className="text-right">
                                             <div className={`text-lg font-bold ${tx.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                                                {tx.type === 'income' ? '+' : ''}{tx.amount.toLocaleString()}
+                                                {tx.type === 'income' ? '+' : ''}¥{tx.amount.toLocaleString()}
                                             </div>
                                             {timeEq && tx.type === 'expense' && (
                                                 <div className="text-xs text-gray-400 flex items-center justify-end mt-1">
@@ -141,7 +141,7 @@ export function TransactionList({ transactions }: TransactionListProps) {
 
                         <div className="mb-6">
                             <div className="text-2xl font-bold text-center mb-4 text-gray-900">
-                                {editingTx.type === 'income' ? '+' : ''}{editingTx.amount.toLocaleString()}
+                                {editingTx.type === 'income' ? '+' : ''}¥{editingTx.amount.toLocaleString()}
                             </div>
                             <div className="space-y-3">
                                 <div>

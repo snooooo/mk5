@@ -121,18 +121,18 @@ export default function HomePage() {
                             今「給料サイクル」の収支 ({cycleStartDate.getMonth() + 1}/{cycleStartDate.getDate()}〜現在)
                         </button>
                         <span className={`text-sm font-bold ${cycleBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {cycleBalance >= 0 ? '+' : ''}{cycleBalance.toLocaleString()}
+                            {cycleBalance >= 0 ? '+' : ''}¥{cycleBalance.toLocaleString()}
                         </span>
                     </div>
 
                     <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
                         <div className="text-center flex-1 border-r border-gray-200">
                             <div className="text-xs text-gray-400 mb-1">収入</div>
-                            <div className="text-lg font-bold text-green-600">+{cycleIncome.toLocaleString()}</div>
+                            <div className="text-lg font-bold text-green-600">+¥{cycleIncome.toLocaleString()}</div>
                         </div>
                         <div className="text-center flex-1">
                             <div className="text-xs text-gray-400 mb-1">支出</div>
-                            <div className="text-lg font-bold text-red-600">-{cycleExpense.toLocaleString()}</div>
+                            <div className="text-lg font-bold text-red-600">-¥{cycleExpense.toLocaleString()}</div>
                         </div>
                     </div>
                 </div>

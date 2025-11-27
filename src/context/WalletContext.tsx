@@ -10,7 +10,7 @@ interface WalletContextType {
     subscriptions: Subscription[];
     addTransaction: (transaction: Omit<Transaction, 'id' | 'createdAt'>) => void;
     updateSettings: (newSettings: Partial<WalletSettings>) => void;
-    editTransaction: (id: string, updates: Partial<Omit<Transaction, 'id' | 'createdAt'>>) => void;
+    editTransaction: (id: string, updates: Partial<Omit<Transaction, 'id'>>) => void;
     addSubscription: (subscription: Omit<Subscription, 'id' | 'createdAt'>) => void;
     removeSubscription: (id: string) => void;
     resetData: () => void;
