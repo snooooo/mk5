@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useWallet } from '@/context/WalletContext';
 import { Clock } from 'lucide-react';
 
-export default function AddPage() {
+function AddContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { addTransaction, settings } = useWallet();
@@ -76,5 +76,13 @@ export default function AddPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function AddPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-slate-900" />}>
+            <AddContent />
+        </Suspense>
     );
 }

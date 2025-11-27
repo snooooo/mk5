@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Home, Delete, X } from 'lucide-react';
@@ -8,7 +8,7 @@ import { Keypad } from '@/components/Keypad';
 import { useWallet } from '@/context/WalletContext';
 import { Layout } from '@/components/Layout';
 
-export default function InputPage() {
+function InputContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { settings, addTransaction } = useWallet();
@@ -161,5 +161,13 @@ export default function InputPage() {
         </div>
       )}
     </Layout>
+  );
+}
+
+export default function InputPage() {
+  return (
+    <Suspense fallback={<Layout><div className="min-h-screen bg-white" /></Layout>}>
+      <InputContent />
+    </Suspense>
   );
 }
