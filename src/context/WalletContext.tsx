@@ -11,6 +11,7 @@ interface WalletContextType {
     addTransaction: (transaction: Omit<Transaction, 'id' | 'createdAt'>) => void;
     updateSettings: (newSettings: Partial<WalletSettings>) => void;
     editTransaction: (id: string, updates: Partial<Omit<Transaction, 'id'>>) => void;
+    deleteTransaction: (id: string) => void;
     addSubscription: (subscription: Omit<Subscription, 'id' | 'createdAt'>) => void;
     removeSubscription: (id: string) => void;
     resetData: () => void;
@@ -129,6 +130,21 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         ));
     };
 
+    const deleteTransaction = (id: string) => {
+        const txToDelete = transactions.find(tx => tx.id === id);
+        if (!txToDelete) return;
+
+        let newBalance = settings.currentBalance;
+        if (txToDelete.type === 'expense') {
+            newBalance += Math.abs(txToDelete.amount);
+        } else {
+            newBalance -= txToDelete.amount;
+        }
+
+        setTransactions(prev => prev.filter(tx => tx.id !== id));
+        updateSettings({ currentBalance: newBalance });
+    };
+
     const addSubscription = (newSub: Omit<Subscription, 'id' | 'createdAt'>) => {
         const subscription: Subscription = {
             ...newSub,
@@ -157,6 +173,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
                 addTransaction,
                 updateSettings,
                 editTransaction,
+                deleteTransaction,
                 addSubscription,
                 removeSubscription,
                 resetData,

@@ -115,10 +115,15 @@ export default function HomePage() {
                     <div className="flex items-center justify-between mb-3">
                         <button
                             onClick={() => setIsDateModalOpen(true)}
-                            className="text-sm font-semibold text-gray-500 flex items-center hover:text-blue-600 transition-colors"
+                            className="text-sm font-semibold text-gray-500 flex flex-col items-start hover:text-blue-600 transition-colors"
                         >
-                            <Calendar className="w-4 h-4 mr-1" />
-                            今「給料サイクル」の収支 ({cycleStartDate.getMonth() + 1}/{cycleStartDate.getDate()}〜現在)
+                            <div className="flex items-center">
+                                <Calendar className="w-4 h-4 mr-1" />
+                                <span>今「給料サイクル」の収支</span>
+                            </div>
+                            <span className="text-xs ml-5 mt-0.5">
+                                ({cycleStartDate.getMonth() + 1}/{cycleStartDate.getDate()}〜現在)
+                            </span>
                         </button>
                         <span className={`text-sm font-bold ${cycleBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                             {cycleBalance >= 0 ? '+' : ''}¥{cycleBalance.toLocaleString()}

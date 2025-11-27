@@ -3,14 +3,14 @@
 import React, { useState } from 'react';
 import { Transaction } from '@/types';
 import { useWallet } from '@/context/WalletContext';
-import { X, Save, Clock } from 'lucide-react';
+import { X, Save, Clock, Trash2 } from 'lucide-react';
 
 interface TransactionListProps {
     transactions: Transaction[];
 }
 
 export function TransactionList({ transactions }: TransactionListProps) {
-    const { editTransaction, settings } = useWallet();
+    const { editTransaction, deleteTransaction, settings } = useWallet();
     const [editingTx, setEditingTx] = useState<Transaction | null>(null);
     const [memoInput, setMemoInput] = useState('');
     const [dateTimeInput, setDateTimeInput] = useState('');
@@ -167,13 +167,27 @@ export function TransactionList({ transactions }: TransactionListProps) {
                             </div>
                         </div>
 
-                        <button
-                            onClick={handleSave}
-                            className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl shadow-md active:bg-blue-700 transition-colors flex items-center justify-center"
-                        >
-                            <Save className="w-5 h-5 mr-2" />
-                            保存
-                        </button>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => {
+                                    if (confirm('この取引を削除しますか？')) {
+                                        deleteTransaction(editingTx.id);
+                                        setEditingTx(null);
+                                    }
+                                }}
+                                className="flex-1 bg-red-50 text-red-600 font-bold py-3 rounded-xl active:bg-red-100 transition-colors flex items-center justify-center"
+                            >
+                                <Trash2 className="w-5 h-5 mr-2" />
+                                削除
+                            </button>
+                            <button
+                                onClick={handleSave}
+                                className="flex-1 bg-blue-600 text-white font-bold py-3 rounded-xl shadow-md active:bg-blue-700 transition-colors flex items-center justify-center"
+                            >
+                                <Save className="w-5 h-5 mr-2" />
+                                保存
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
