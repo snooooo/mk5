@@ -74,7 +74,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
                 id: crypto.randomUUID(),
                 amount: dailyTotal,
                 type: 'expense',
-                memo: 'サブスクリプション（日割り）',
+                memo: '定期的な支出（日割り）',
                 isSubscription: true,
                 createdAt: date.toISOString(),
             });

@@ -6,7 +6,7 @@ import { WalletProvider } from "@/context/WalletContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "MK5 - マジで会計したの5秒前",
+  title: "MK5 - MajiでKaikeiして5秒",
   description: "シンプルな家計管理アプリ",
   manifest: "/manifest.json",
   appleWebApp: {

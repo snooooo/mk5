@@ -34,7 +34,7 @@ function AddContent() {
         addTransaction({
             amount: -amount, // Expense is negative
             type: 'expense',
-            memo: memo || '支出',
+            memo: memo || '',
         });
 
         router.push('/home');

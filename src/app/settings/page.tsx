@@ -149,7 +149,7 @@ export default function SettingsPage() {
                 <section className="space-y-6">
                     <h2 className="text-lg font-bold text-gray-900 border-b pb-2 flex items-center">
                         <CreditCard className="w-5 h-5 mr-2" />
-                        サブスクリプション管理
+                        定期的な支出の管理
                     </h2>
 
                     <div className="bg-gray-50 p-4 rounded-xl space-y-4">
@@ -212,7 +212,7 @@ export default function SettingsPage() {
                         ))}
                         {subscriptions.length === 0 && (
                             <div className="text-center text-gray-400 py-4 text-sm">
-                                登録されたサブスクリプションはありません
+                                登録された定期的な支出はありません
                             </div>
                         )}
                     </div>

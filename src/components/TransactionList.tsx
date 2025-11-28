@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Transaction } from '@/types';
 import { useWallet } from '@/context/WalletContext';
-import { X, Save, Clock, Trash2 } from 'lucide-react';
+import { X, Save, Clock, Trash2, Star } from 'lucide-react';
 
 interface TransactionListProps {
     transactions: Transaction[];
@@ -13,11 +13,17 @@ export function TransactionList({ transactions }: TransactionListProps) {
     const { editTransaction, deleteTransaction, settings } = useWallet();
     const [editingTx, setEditingTx] = useState<Transaction | null>(null);
     const [memoInput, setMemoInput] = useState('');
+    const [amountInput, setAmountInput] = useState('');
     const [dateTimeInput, setDateTimeInput] = useState('');
+    const [satisfaction, setSatisfaction] = useState<number | undefined>(undefined);
+
+    const [deletingTxId, setDeletingTxId] = useState<string | null>(null);
 
     const handleEditClick = (tx: Transaction) => {
         setEditingTx(tx);
         setMemoInput(tx.memo);
+        setAmountInput(Math.abs(tx.amount).toString());
+        setSatisfaction(tx.satisfaction);
         // Format datetime for input (YYYY-MM-DDTHH:MM)
         const date = new Date(tx.createdAt);
         const y = date.getFullYear();
@@ -30,10 +36,23 @@ export function TransactionList({ transactions }: TransactionListProps) {
 
     const handleSave = () => {
         if (editingTx) {
+            const newAmount = parseInt(amountInput, 10);
+            if (isNaN(newAmount)) return;
+
             editTransaction(editingTx.id, {
+                amount: editingTx.type === 'income' ? newAmount : -newAmount,
                 memo: memoInput,
-                createdAt: new Date(dateTimeInput).toISOString()
+                createdAt: new Date(dateTimeInput).toISOString(),
+                satisfaction: satisfaction
             });
+            setEditingTx(null);
+        }
+    };
+
+    const handleDelete = () => {
+        if (deletingTxId) {
+            deleteTransaction(deletingTxId);
+            setDeletingTxId(null);
             setEditingTx(null);
         }
     };
@@ -102,6 +121,13 @@ export function TransactionList({ transactions }: TransactionListProps) {
                                             <span className={`font-medium truncate max-w-[200px] ${!tx.memo ? 'text-gray-400 italic' : 'text-gray-700'}`}>
                                                 {tx.memo || '使途を入力...'}
                                             </span>
+                                            {tx.satisfaction && (
+                                                <div className="flex items-center mt-0.5">
+                                                    {[...Array(tx.satisfaction)].map((_, i) => (
+                                                        <Star key={i} className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="text-right">
                                             <div className={`text-lg font-bold ${tx.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
@@ -133,17 +159,36 @@ export function TransactionList({ transactions }: TransactionListProps) {
                         className="bg-white w-full max-w-sm rounded-2xl p-6 shadow-xl"
                     >
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-bold text-gray-900">使途を編集</h3>
-                            <button onClick={() => setEditingTx(null)} className="text-gray-400 hover:text-gray-600">
-                                <X className="w-6 h-6" />
-                            </button>
+                            <h3 className="text-lg font-bold text-gray-900">取引を編集</h3>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => setDeletingTxId(editingTx.id)}
+                                    className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition-colors"
+                                >
+                                    <Trash2 className="w-5 h-5" />
+                                </button>
+                                <button onClick={() => setEditingTx(null)} className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-colors">
+                                    <X className="w-6 h-6" />
+                                </button>
+                            </div>
                         </div>
 
                         <div className="mb-6">
-                            <div className="text-2xl font-bold text-center mb-4 text-gray-900">
-                                {editingTx.type === 'income' ? '+' : ''}¥{editingTx.amount.toLocaleString()}
-                            </div>
                             <div className="space-y-3">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">金額</label>
+                                    <div className="relative">
+                                        <span className={`absolute left-3 top-1/2 -translate-y-1/2 font-bold ${editingTx.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                                            {editingTx.type === 'income' ? '+' : '-'}¥
+                                        </span>
+                                        <input
+                                            type="number"
+                                            value={amountInput}
+                                            onChange={(e) => setAmountInput(e.target.value)}
+                                            className={`w-full p-3 pl-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-bold text-xl ${editingTx.type === 'income' ? 'text-green-600' : 'text-red-600'}`}
+                                        />
+                                    </div>
+                                </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">日時</label>
                                     <input
@@ -161,24 +206,43 @@ export function TransactionList({ transactions }: TransactionListProps) {
                                         onChange={(e) => setMemoInput(e.target.value)}
                                         placeholder="使途を入力してください"
                                         className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                                        autoFocus
                                     />
                                 </div>
+                                {editingTx.type === 'expense' && (
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">支出の質</label>
+                                        <div className="flex gap-2 justify-center bg-gray-50 p-3 rounded-xl">
+                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                <button
+                                                    key={star}
+                                                    onClick={() => setSatisfaction(star)}
+                                                    className={`p-1 transition-transform active:scale-95 ${(satisfaction || 0) >= star
+                                                        ? 'text-yellow-400 fill-yellow-400'
+                                                        : 'text-gray-300'
+                                                        }`}
+                                                >
+                                                    <Star className={`w-8 h-8 ${(satisfaction || 0) >= star ? 'fill-current' : ''}`} />
+                                                </button>
+                                            ))}
+                                        </div>
+                                        <div className="text-center text-xs text-gray-400 mt-1">
+                                            {satisfaction === 1 && '悪い支出...'}
+                                            {satisfaction === 2 && '微妙'}
+                                            {satisfaction === 3 && '普通'}
+                                            {satisfaction === 4 && '良い！'}
+                                            {satisfaction === 5 && '最高の支出！'}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
                         <div className="flex gap-3">
                             <button
-                                onClick={() => {
-                                    if (confirm('この取引を削除しますか？')) {
-                                        deleteTransaction(editingTx.id);
-                                        setEditingTx(null);
-                                    }
-                                }}
-                                className="flex-1 bg-red-50 text-red-600 font-bold py-3 rounded-xl active:bg-red-100 transition-colors flex items-center justify-center"
+                                onClick={() => setEditingTx(null)}
+                                className="flex-1 bg-gray-100 text-gray-600 font-bold py-3 rounded-xl active:bg-gray-200 transition-colors flex items-center justify-center"
                             >
-                                <Trash2 className="w-5 h-5 mr-2" />
-                                削除
+                                キャンセル
                             </button>
                             <button
                                 onClick={handleSave}
@@ -186,6 +250,36 @@ export function TransactionList({ transactions }: TransactionListProps) {
                             >
                                 <Save className="w-5 h-5 mr-2" />
                                 保存
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Delete Confirmation Modal */}
+            {deletingTxId && (
+                <div
+                    onClick={() => setDeletingTxId(null)}
+                    className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[60] animate-in fade-in duration-200"
+                >
+                    <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="bg-white w-full max-w-xs rounded-2xl p-6 shadow-xl text-center"
+                    >
+                        <h3 className="text-lg font-bold text-gray-900 mb-2">確認</h3>
+                        <p className="text-gray-600 mb-6">この取引を削除しますか？</p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setDeletingTxId(null)}
+                                className="flex-1 bg-gray-100 text-gray-600 font-bold py-3 rounded-xl active:bg-gray-200 transition-colors"
+                            >
+                                キャンセル
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                className="flex-1 bg-red-500 text-white font-bold py-3 rounded-xl shadow-md active:bg-red-600 transition-colors"
+                            >
+                                削除
                             </button>
                         </div>
                     </div>

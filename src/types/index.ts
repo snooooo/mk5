@@ -21,9 +21,9 @@ export interface Subscription {
 export interface Transaction {
   id: string;
   amount: number;
-  type: 'income' | 'expense';
   memo: string;
-  satisfaction?: number;
-  isSubscription?: boolean; // Identify auto-generated transactions
+  type: 'income' | 'expense';
   createdAt: string;
+  isSubscription?: boolean;
+  satisfaction?: number; // 1-5 rating for expenses
 }
